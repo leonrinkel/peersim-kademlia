@@ -23,6 +23,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    implementation(files("libs/djep-1.0.0.jar"))
+    implementation(files("libs/jep-2.3.0.jar"))
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -34,7 +37,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "org.example.App"
+    mainClass = "peersim.Simulator"
 }
 
 tasks.named<Test>("test") {

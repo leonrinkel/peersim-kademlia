@@ -44,3 +44,6 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+!/app/libs/djep-1.0.0.jar
+!/app/libs/jep-2.3.0.jar
