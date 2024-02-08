@@ -9,7 +9,8 @@
             "name": "Simulator",
             "request": "launch",
             "mainClass": "peersim.Simulator",
-            "projectName": "app"
+            "projectName": "app",
+            "args": "example.cfg"
         }
     ]
 }
