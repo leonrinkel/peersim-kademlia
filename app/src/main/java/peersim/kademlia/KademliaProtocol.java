@@ -4,7 +4,7 @@ package peersim.kademlia;
  * A Kademlia implementation for PeerSim extending the EDProtocol class.<br>
  * See the Kademlia bibliografy for more information about the protocol.
  *
- * 
+ *
  * @author Daniele Furlan, Maurizio Bonani
  * @version 1.0
  */
@@ -28,6 +28,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	final String PAR_K = "K";
 	final String PAR_ALPHA = "ALPHA";
 	final String PAR_BITS = "BITS";
+	final String PAR_TIMEOUT = "timeout";
 
 	private static final String PAR_TRANSPORT = "transport";
 	private static String prefix = null;
@@ -60,10 +61,12 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 */
 	private LinkedHashMap<Long, FindOperation> findOp;
 
+	private long timeout;
+
 	/**
 	 * Replicate this object by returning an identical copy.<br>
 	 * It is called by the initializer and do not fill any particular field.
-	 * 
+	 *
 	 * @return Object
 	 */
 	public Object clone() {
@@ -73,7 +76,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 
 	/**
 	 * Used only by the initializer when creating the prototype. Every other instance call CLONE to create the new object.
-	 * 
+	 *
 	 * @param prefix
 	 *            String
 	 */
@@ -90,6 +93,8 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 		findOp = new LinkedHashMap<Long, FindOperation>();
 
 		tid = Configuration.getPid(prefix + "." + PAR_TRANSPORT);
+
+		timeout = Configuration.getLong(prefix + "." + PAR_TIMEOUT);
 	}
 
 	/**
@@ -112,7 +117,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	/**
 	 * Search through the network the Node having a specific node Id, by performing binary serach (we concern about the ordering
 	 * of the network).
-	 * 
+	 *
 	 * @param searchNodeId
 	 *            BigInteger
 	 * @return Node
@@ -155,7 +160,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 * Update the find operation record with the closest set of neighbour received. Than, send as many ROUTE request I can
 	 * (according to the ALPHA parameter).<br>
 	 * If no closest neighbour available and no outstanding messages stop the find operation.
-	 * 
+	 *
 	 * @param m
 	 *            Message
 	 * @param myPid
@@ -221,7 +226,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	/**
 	 * Response to a route request.<br>
 	 * Find the ALPHA closest node consulting the k-buckets and return them to the sender.
-	 * 
+	 *
 	 * @param m
 	 *            Message
 	 * @param myPid
@@ -245,7 +250,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	/**
 	 * Start a find node opearation.<br>
 	 * Find the ALPHA closest node and send find request to them.
-	 * 
+	 *
 	 * @param m
 	 *            Message received (contains the node to find)
 	 * @param myPid
@@ -283,7 +288,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 
 	/**
 	 * send a message with current transport layer and starting the timeout timer (wich is an event) if the message is a request
-	 * 
+	 *
 	 * @param m
 	 *            the message to send
 	 * @param destId
@@ -303,17 +308,16 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 
 		if (m.getType() == Message.MSG_ROUTE) { // is a request
 			Timeout t = new Timeout(destId, m.id, m.operationId);
-			long latency = transport.getLatency(src, dest);
 
 			// add to sent msg
 			this.sentMsg.put(m.id, m.timestamp);
-			EDSimulator.add(4 * latency, t, src, myPid); // set delay = 2*RTT
+			EDSimulator.add(timeout, t, src, myPid);
 		}
 	}
 
 	/**
 	 * manage the peersim receiving of the events
-	 * 
+	 *
 	 * @param myNode
 	 *            Node
 	 * @param myPid
@@ -378,7 +382,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 
 	/**
 	 * set the current NodeId
-	 * 
+	 *
 	 * @param tmp
 	 *            BigInteger
 	 */
