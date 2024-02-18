@@ -21,7 +21,7 @@ import peersim.edsim.EDSimulator;
  * Other parameters:<br>
  * - maxsize (default: infinite): max size of network. If this value is reached no more add operation are performed.<br>
  * - minsize (default: 1): min size of network. If this value is reached no more remove operation are performed.<br>
- * 
+ *
  * @author Daniele Furlan, Maurizio Bonani
  * @version 1.0
  */
@@ -154,7 +154,7 @@ public class Turbulence implements Control {
 		m.dest = newKad.nodeId;
 
 		// perform initialization
-		newKad.routingTable.addNeighbour(((KademliaProtocol) (start.getProtocol(kademliaid))).nodeId);
+		newKad.routingTable.addNeighbour(newNode, start, ((KademliaProtocol) (start.getProtocol(kademliaid))).nodeId);
 
 		// start auto-search
 		EDSimulator.add(0, m, newNode, kademliaid);
@@ -207,4 +207,3 @@ public class Turbulence implements Control {
 	}
 
 } // End of class
-

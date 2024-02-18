@@ -19,7 +19,7 @@ import peersim.core.Network;
 import peersim.core.Node;
 import peersim.edsim.EDProtocol;
 import peersim.edsim.EDSimulator;
-import peersim.transport.UnreliableTransport;
+import peersim.transport.Transport;
 
 //__________________________________________________________________________________________________
 public class KademliaProtocol implements Cloneable, EDProtocol {
@@ -28,11 +28,12 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	final String PAR_K = "K";
 	final String PAR_ALPHA = "ALPHA";
 	final String PAR_BITS = "BITS";
+	final String PAR_SORT = "SORT";
 	final String PAR_TIMEOUT = "timeout";
 
 	private static final String PAR_TRANSPORT = "transport";
 	private static String prefix = null;
-	private UnreliableTransport transport;
+	private Transport transport;
 	private int tid;
 	private int kademliaid;
 
@@ -110,6 +111,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 		KademliaCommonConfig.K = Configuration.getInt(prefix + "." + PAR_K, KademliaCommonConfig.K);
 		KademliaCommonConfig.ALPHA = Configuration.getInt(prefix + "." + PAR_ALPHA, KademliaCommonConfig.ALPHA);
 		KademliaCommonConfig.BITS = Configuration.getInt(prefix + "." + PAR_BITS, KademliaCommonConfig.BITS);
+		KademliaCommonConfig.SORT = Configuration.getInt(prefix + "." + PAR_SORT, KademliaCommonConfig.SORT);
 
 		_ALREADY_INSTALLED = true;
 	}
@@ -169,7 +171,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	private void route(Message m, int myPid) {
 		// add message source to my routing table
 		if (m.src != null) {
-			routingTable.addNeighbour(m.src);
+			routingTable.addNeighbour(nodeIdtoNode(this.nodeId), nodeIdtoNode(m.src), m.src);
 		}
 
 		// get corresponding find operation (using the message field operationId)
@@ -298,12 +300,12 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 */
 	public void sendMessage(Message m, BigInteger destId, int myPid) {
 		// add destination to routing table
-		this.routingTable.addNeighbour(destId);
+		this.routingTable.addNeighbour(nodeIdtoNode(this.nodeId), nodeIdtoNode(destId), destId);
 
 		Node src = nodeIdtoNode(this.nodeId);
 		Node dest = nodeIdtoNode(destId);
 
-		transport = (UnreliableTransport) (Network.prototype).getProtocol(tid);
+		transport = (Transport) (Network.prototype).getProtocol(tid);
 		transport.send(src, dest, m, kademliaid);
 
 		if (m.getType() == Message.MSG_ROUTE) { // is a request

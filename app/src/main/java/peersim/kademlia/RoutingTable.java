@@ -4,9 +4,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import peersim.core.Node;
+
 /**
  * Gives an implementation for the rounting table component of a kademlia node
- * 
+ *
  * @author Daniele Furlan, Maurizio Bonani
  * @version 1.0
  */
@@ -31,12 +33,12 @@ public class RoutingTable implements Cloneable {
 	}
 
 	// add a neighbour to the correct k-bucket
-	public void addNeighbour(BigInteger node) {
+	public void addNeighbour(Node me, Node neighbour, BigInteger neighborNodeId) {
 		// get the lenght of the longest common prefix (correspond to the correct k-bucket)
-		int prefix_len = Util.prefixLen(nodeId, node);
+		int prefix_len = Util.prefixLen(nodeId, neighborNodeId);
 
 		// add the node to the k-bucket
-		k_buckets.get(prefix_len).addNeighbour(node);
+		k_buckets.get(prefix_len).addNeighbour(me, neighbour, neighborNodeId);
 	}
 
 	// remove a neighbour from the correct k-bucket
@@ -103,7 +105,7 @@ public class RoutingTable implements Cloneable {
 	// ______________________________________________________________________________________________
 	/**
 	 * print a string representation of the table
-	 * 
+	 *
 	 * @return String
 	 */
 	public String toString() {
