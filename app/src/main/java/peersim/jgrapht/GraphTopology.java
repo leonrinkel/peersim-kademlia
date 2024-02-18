@@ -4,7 +4,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm.SingleSourcePaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DefaultEdge;
 
 import peersim.config.Configuration;
 import peersim.core.CommonState;
@@ -82,13 +82,35 @@ public class GraphTopology implements EDProtocol {
 
     }
 
+    static class LinkEdge extends DefaultEdge {
+
+        private Integer latency;
+
+        public LinkEdge() {
+            this(null);
+        }
+
+        public LinkEdge(Integer latency) {
+            this.latency = latency;
+        }
+
+        public Integer getLatency() {
+            return latency;
+        }
+
+        public void setLatency(Integer latency) {
+            this.latency = latency;
+        }
+
+    }
+
     private static final String PAR_FILE = "file";
 
-    private final Graph<AsVertex, DefaultWeightedEdge> graph;
+    private final Graph<AsVertex, LinkEdge> graph;
 
     private Map<String, ArrayList<Node>> asToNodesMap;
 
-    private Map<Map.Entry<Node, Node>, GraphPath<AsVertex, DefaultWeightedEdge>> pathCache = new HashMap<>();
+    private Map<Map.Entry<Node, Node>, GraphPath<AsVertex, LinkEdge>> pathCache = new HashMap<>();
 
     public GraphTopology(String prefix) {
         String path = Configuration.getString(prefix + "." + PAR_FILE);
@@ -125,7 +147,7 @@ public class GraphTopology implements EDProtocol {
         return addNode(node);
     }
 
-    private GraphPath<AsVertex, DefaultWeightedEdge> shortestPath(Node src, Node dst) {
+    private GraphPath<AsVertex, LinkEdge> shortestPath(Node src, Node dst) {
         Map.Entry<Node, Node> cacheKey = new AbstractMap.SimpleImmutableEntry<>(src, dst);
         if (pathCache.containsKey(cacheKey)) {
             return pathCache.get(cacheKey);
@@ -134,11 +156,11 @@ public class GraphTopology implements EDProtocol {
         AsVertex srcVertex = asOfNode(src);
         AsVertex dstVertex = asOfNode(dst);
 
-        DijkstraShortestPath<AsVertex, DefaultWeightedEdge> dijkstra =
+        DijkstraShortestPath<AsVertex, LinkEdge> dijkstra =
             new DijkstraShortestPath<>(graph);
-        SingleSourcePaths<AsVertex, DefaultWeightedEdge> paths =
+        SingleSourcePaths<AsVertex, LinkEdge> paths =
             dijkstra.getPaths(srcVertex);
-        GraphPath<AsVertex, DefaultWeightedEdge> path = paths.getPath(dstVertex);
+        GraphPath<AsVertex, LinkEdge> path = paths.getPath(dstVertex);
 
         pathCache.put(new AbstractMap.SimpleImmutableEntry<>(src, dst), path);
 
@@ -150,7 +172,11 @@ public class GraphTopology implements EDProtocol {
     }
 
     public int getLatency(Node src, Node dst) {
-        return (int) shortestPath(src, dst).getWeight();
+        int totalLatency = 0;
+        for (var linkEdge : shortestPath(src, dst).getEdgeList()) {
+            totalLatency += linkEdge.getLatency();
+        }
+        return totalLatency;
     }
 
 }

@@ -2,26 +2,26 @@ package peersim.jgrapht;
 
 import org.jgrapht.Graph;
 import org.jgrapht.generate.RandomRegularGraphGenerator;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
-import org.jgrapht.util.SupplierUtil;
 
 import peersim.jgrapht.GraphTopology.AsVertex;
+import peersim.jgrapht.GraphTopology.LinkEdge;
 import peersim.jgrapht.GraphUtils.AsVertexSupplier;
+import peersim.jgrapht.GraphUtils.LinkEdgeSupplier;
 
 import java.util.Random;
 import java.io.File;
 
 public class GraphGenerator {
 
-    static Graph<AsVertex, DefaultWeightedEdge> empty() {
-        Graph<AsVertex, DefaultWeightedEdge> graph = GraphTypeBuilder
+    static Graph<AsVertex, LinkEdge> empty() {
+        Graph<AsVertex, LinkEdge> graph = GraphTypeBuilder
             .undirected()
-            .weighted(true)
+            .weighted(false)
             .allowingMultipleEdges(false)
             .allowingSelfLoops(false)
             .vertexSupplier(new AsVertexSupplier())
-            .edgeSupplier(SupplierUtil.createDefaultWeightedEdgeSupplier())
+            .edgeSupplier(new LinkEdgeSupplier())
             .buildGraph();
         return graph;
     }
@@ -32,16 +32,16 @@ public class GraphGenerator {
         return latency;
     }
 
-    static Graph<AsVertex, DefaultWeightedEdge> with(int nodes, int degree,
+    static Graph<AsVertex, LinkEdge> with(int nodes, int degree,
         int minLatency, int maxLatency, Random r) {
-        Graph<AsVertex, DefaultWeightedEdge> graph = empty();
+        Graph<AsVertex, LinkEdge> graph = empty();
 
-        RandomRegularGraphGenerator<AsVertex, DefaultWeightedEdge> generator =
+        RandomRegularGraphGenerator<AsVertex, LinkEdge> generator =
             new RandomRegularGraphGenerator<>(nodes, degree, r);
         generator.generateGraph(graph);
 
         for (var e : graph.edgeSet()) {
-            graph.setEdgeWeight(e, sampleLatency(minLatency, maxLatency, r));
+            e.setLatency(sampleLatency(minLatency, maxLatency, r));
         }
 
         return graph;
