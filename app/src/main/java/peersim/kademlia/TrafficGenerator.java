@@ -6,10 +6,17 @@ import peersim.core.Control;
 import peersim.core.Network;
 import peersim.core.Node;
 import peersim.edsim.EDSimulator;
+import peersim.jgrapht.GraphTopology;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This control generates random search traffic from nodes to random destination node.
- * 
+ *
  * @author Daniele Furlan, Maurizio Bonani
  * @version 1.0
  */
@@ -22,52 +29,77 @@ public class TrafficGenerator implements Control {
 	 * MSPastry Protocol to act
 	 */
 	private final static String PAR_PROT = "protocol";
+	private static final String PAR_TOPO = "topo";
+	private final static String PAR_PDIST = "pdist";
 
 	/**
 	 * MSPastry Protocol ID to act
 	 */
 	private final int pid;
+	private final int topoPid;
+	private final Map<Integer, Double> distProbMap = new HashMap<>();
 
 	// ______________________________________________________________________________________________
 	public TrafficGenerator(String prefix) {
 		pid = Configuration.getPid(prefix + "." + PAR_PROT);
+		topoPid = Configuration.getPid(prefix + "." + PAR_TOPO);
 
+		String[] names = Configuration.getNames(prefix + "." + PAR_PDIST);
+		for (String name : names) {
+			int dist = Integer.parseInt(name.split("\\.")[3]);
+			double prob = Configuration.getDouble(name);
+			distProbMap.put(dist, prob);
+		}
 	}
 
-	// ______________________________________________________________________________________________
-	/**
-	 * generates a random find node message, by selecting randomly the destination.
-	 * 
-	 * @return Message
-	 */
-	private Message generateFindNodeMessage() {
-		Message m = Message.makeFindNode("Automatically Generated Traffic");
-		m.timestamp = CommonState.getTime();
+	private int pickDistance(Random r) {
+		List<Integer> distances = new ArrayList<>(distProbMap.keySet());
+		List<Double> cumulativeProbs = new ArrayList<>();
+		double sum = 0;
 
-		// existing active destination node
-		Node n = Network.get(CommonState.r.nextInt(Network.size()));
-		while (!n.isUp()) {
-			n = Network.get(CommonState.r.nextInt(Network.size()));
+		for (Integer dist : distances) {
+			sum += distProbMap.get(dist);
+			cumulativeProbs.add(sum);
 		}
-		m.dest = ((KademliaProtocol) (n.getProtocol(pid))).nodeId;
 
-		return m;
+		double p = r.nextDouble();
+		return distances.stream()
+			.filter(d -> p < cumulativeProbs.get(distances.indexOf(d)))
+			.findFirst().get();
 	}
 
 	// ______________________________________________________________________________________________
 	/**
 	 * every call of this control generates and send a random find node message
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean execute() {
-		Node start;
+		// find source node
+		Node src;
 		do {
-			start = Network.get(CommonState.r.nextInt(Network.size()));
-		} while ((start == null) || (!start.isUp()));
+			src = Network.get(CommonState.r.nextInt(Network.size()));
+		} while ((src == null) || (!src.isUp()));
+
+		// find destination node
+		int desiredDistance = pickDistance(CommonState.r);
+		int actualDistance;
+		Node dst;
+		do {
+			dst = Network.get(CommonState.r.nextInt(Network.size()));
+			actualDistance =
+				((GraphTopology) src.getProtocol(topoPid)).getHops(src, dst);
+		} while (
+			(dst == null) ||
+			(!dst.isUp()) ||
+			(actualDistance != desiredDistance)
+		);
 
 		// send message
-		EDSimulator.add(0, generateFindNodeMessage(), start, pid);
+		Message m = Message.makeFindNode("Automatically Generated Traffic");
+		m.timestamp = CommonState.getTime();
+		m.dest = ((KademliaProtocol) (dst.getProtocol(pid))).nodeId;
+		EDSimulator.add(0, m, src, pid);
 
 		return false;
 	}
