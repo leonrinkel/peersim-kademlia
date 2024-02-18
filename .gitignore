@@ -47,3 +47,5 @@ gradle-app.setting
 
 !/app/libs/djep-1.0.0.jar
 !/app/libs/jep-2.3.0.jar
+
+/generated.graphml

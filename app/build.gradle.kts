@@ -26,6 +26,9 @@ dependencies {
 
     implementation(files("libs/djep-1.0.0.jar"))
     implementation(files("libs/jep-2.3.0.jar"))
+
+    implementation("org.jgrapht:jgrapht-core:1.5.2")
+    implementation("org.jgrapht:jgrapht-io:1.5.2")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

@@ -11,6 +11,14 @@
             "mainClass": "peersim.Simulator",
             "projectName": "app",
             "args": "example.cfg"
+        },
+        {
+            "type": "java",
+            "name": "Generator",
+            "request": "launch",
+            "mainClass": "peersim.jgrapht.GraphGenerator",
+            "projectName": "app",
+            "args": "generated.graphml 100 10 1 20"
         }
     ]
 }
