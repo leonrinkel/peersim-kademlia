@@ -18,7 +18,7 @@
             "request": "launch",
             "mainClass": "peersim.jgrapht.GraphGenerator",
             "projectName": "app",
-            "args": "generated.graphml 100 10 1 20"
+            "args": "generated.graphml 50 4 10 100"
         }
     ]
 }

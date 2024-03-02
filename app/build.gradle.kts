@@ -41,6 +41,8 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "peersim.Simulator"
+
+    tasks.run.get().workingDir = rootProject.projectDir
 }
 
 tasks.named<Test>("test") {
