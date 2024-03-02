@@ -95,6 +95,14 @@ public class TrafficGenerator implements Control {
 			(actualDistance != desiredDistance)
 		);
 
+		switch (actualDistance) {
+			case 0: KademliaObserver.dist0count.add(1); break;
+			case 1: KademliaObserver.dist1count.add(1); break;
+			case 2: KademliaObserver.dist2count.add(1); break;
+			case 3: KademliaObserver.dist3count.add(1); break;
+			case 4: KademliaObserver.dist4count.add(1); break;
+		}
+
 		// send message
 		Message m = Message.makeFindNode("Automatically Generated Traffic");
 		m.timestamp = CommonState.getTime();

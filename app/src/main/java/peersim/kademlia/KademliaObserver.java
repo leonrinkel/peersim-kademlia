@@ -13,7 +13,7 @@ import peersim.util.IncrementalStats;
 
 /**
  * This class implements a simple observer of search time and hop average in finding a node in the network
- * 
+ *
  * @author Daniele Furlan, Maurizio Bonani
  * @version 1.0
  */
@@ -39,6 +39,12 @@ public class KademliaObserver implements Control {
 	 */
 	public static IncrementalStats find_op = new IncrementalStats();
 
+	public static IncrementalStats dist0count = new IncrementalStats();
+	public static IncrementalStats dist1count = new IncrementalStats();
+	public static IncrementalStats dist2count = new IncrementalStats();
+	public static IncrementalStats dist3count = new IncrementalStats();
+	public static IncrementalStats dist4count = new IncrementalStats();
+
 	/** Parameter of the protocol we want to observe */
 	private static final String PAR_PROT = "protocol";
 
@@ -55,7 +61,7 @@ public class KademliaObserver implements Control {
 
 	/**
 	 * print the statistical snapshot of the current situation
-	 * 
+	 *
 	 * @return boolean always false
 	 */
 	public boolean execute() {
@@ -66,6 +72,16 @@ public class KademliaObserver implements Control {
 				sz--;
 
 		String s = String.format("[time=%d]:[N=%d current nodes UP] [D=%f msg deliv] [%f min h] [%f average h] [%f max h] [%d min l] [%d msec average l] [%d max l]", CommonState.getTime(), sz, msg_deliv.getSum(), hopStore.getMin(), hopStore.getAverage(), hopStore.getMax(), (int) timeStore.getMin(), (int) timeStore.getAverage(), (int) timeStore.getMax());
+
+		System.err.println(String.format(
+			"[time=%d]:[dist0count=%f] [dist1count=%f] [dist2count=%f] [dist3count=%f] [dist4count=%f]",
+			CommonState.getTime(),
+			dist0count.getSum(),
+			dist1count.getSum(),
+			dist2count.getSum(),
+			dist3count.getSum(),
+			dist4count.getSum()
+		));
 
 		if (CommonState.getTime() == 3600000) {
 			// create hop file
