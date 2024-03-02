@@ -2,8 +2,7 @@ package peersim.jgrapht;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.interfaces.ShortestPathAlgorithm.SingleSourcePaths;
-import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.alg.shortestpath.BFSShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 
 import peersim.config.Configuration;
@@ -156,22 +155,26 @@ public class GraphTopology implements EDProtocol {
         AsVertex srcVertex = asOfNode(src);
         AsVertex dstVertex = asOfNode(dst);
 
-        DijkstraShortestPath<AsVertex, LinkEdge> dijkstra =
-            new DijkstraShortestPath<>(graph);
-        SingleSourcePaths<AsVertex, LinkEdge> paths =
-            dijkstra.getPaths(srcVertex);
-        GraphPath<AsVertex, LinkEdge> path = paths.getPath(dstVertex);
-
+        GraphPath<AsVertex, LinkEdge> path =
+            BFSShortestPath.findPathBetween(graph, srcVertex, dstVertex);
         pathCache.put(new AbstractMap.SimpleImmutableEntry<>(src, dst), path);
 
         return path;
     }
 
     public int getHops(Node src, Node dst) {
+        if (src == dst) {
+            return 0;
+        }
+
         return shortestPath(src, dst).getLength();
     }
 
     public int getLatency(Node src, Node dst) {
+        if (src == dst) {
+            return 0;
+        }
+
         int totalLatency = 0;
         for (var linkEdge : shortestPath(src, dst).getEdgeList()) {
             totalLatency += linkEdge.getLatency();
