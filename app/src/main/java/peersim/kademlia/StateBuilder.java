@@ -72,7 +72,8 @@ public class StateBuilder implements peersim.core.Control {
 			for (int k = 0; k < 100; k++) {
 				Node otherNode = Network.get(CommonState.r.nextInt(sz));
 				KademliaProtocol jKad = (KademliaProtocol) (otherNode.getProtocol(kademliaid));
-				iKad.routingTable.addNeighbour(iNode, otherNode, jKad.nodeId);
+				//iKad.routingTable.addNeighbour(iNode, otherNode, jKad.nodeId);
+				iKad.routingTable.add(jKad.nodeId);
 			}
 		}
 
@@ -90,7 +91,8 @@ public class StateBuilder implements peersim.core.Control {
 				if (start > 0 && start < sz) {
 					Node otherNode = Network.get(start++);
 					KademliaProtocol jKad = (KademliaProtocol) (otherNode.getProtocol(kademliaid));
-					iKad.routingTable.addNeighbour(iNode, otherNode, jKad.nodeId);
+					//iKad.routingTable.addNeighbour(iNode, otherNode, jKad.nodeId);
+					iKad.routingTable.add(jKad.nodeId);
 				}
 			}
 		}

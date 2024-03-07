@@ -50,7 +50,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	/**
 	 * routing table of this pastry node
 	 */
-	public RoutingTable routingTable;
+	public MyRoutingTable routingTable;
 
 	/**
 	 * trace message sent for timeout purpose
@@ -87,7 +87,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 
 		_init();
 
-		routingTable = new RoutingTable();
+		routingTable = new MyRoutingTable();
 
 		sentMsg = new TreeMap<Long, Long>();
 
@@ -171,7 +171,8 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	private void route(Message m, int myPid) {
 		// add message source to my routing table
 		if (m.src != null) {
-			routingTable.addNeighbour(nodeIdtoNode(this.nodeId), nodeIdtoNode(m.src), m.src);
+			//routingTable.addNeighbour(nodeIdtoNode(this.nodeId), nodeIdtoNode(m.src), m.src);
+			routingTable.add(m.src);
 		}
 
 		// get corresponding find operation (using the message field operationId)
@@ -236,7 +237,8 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 */
 	private void routeResponse(Message m, int myPid) {
 		// get the ALPHA closest node to destNode
-		BigInteger[] neighbours = this.routingTable.getNeighbours(m.dest, m.src);
+		//BigInteger[] neighbours = this.routingTable.getNeighbours(m.dest, m.src);
+		BigInteger[] neighbours = this.routingTable.closest(m.dest);
 
 		// create a response message containing the neighbours (with the same id of the request)
 		Message response = new Message(Message.MSG_RESPONSE, neighbours);
@@ -268,7 +270,8 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 		findOp.put(fop.operationId, fop);
 
 		// get the ALPHA closest node to srcNode and add to find operation
-		BigInteger[] neighbours = this.routingTable.getNeighbours(m.dest, this.nodeId);
+		//BigInteger[] neighbours = this.routingTable.getNeighbours(m.dest, this.nodeId);
+		BigInteger[] neighbours = this.routingTable.closest(m.dest);
 		fop.elaborateResponse(neighbours);
 		fop.available_requests = KademliaCommonConfig.ALPHA;
 
@@ -300,7 +303,8 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 */
 	public void sendMessage(Message m, BigInteger destId, int myPid) {
 		// add destination to routing table
-		this.routingTable.addNeighbour(nodeIdtoNode(this.nodeId), nodeIdtoNode(destId), destId);
+		//this.routingTable.addNeighbour(nodeIdtoNode(this.nodeId), nodeIdtoNode(destId), destId);
+		this.routingTable.add(destId);
 
 		Node src = nodeIdtoNode(this.nodeId);
 		Node dest = nodeIdtoNode(destId);
@@ -366,7 +370,8 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 					// remove form sentMsg
 					sentMsg.remove(t.msgID);
 					// remove node from my routing table
-					this.routingTable.removeNeighbour(t.node);
+					//this.routingTable.removeNeighbour(t.node);
+					this.routingTable.remove(t.node);
 					// remove from closestSet of find operation
 					this.findOp.get(t.opID).closestSet.remove(t.node);
 					// try another node
@@ -390,7 +395,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 */
 	public void setNodeId(BigInteger tmp) {
 		this.nodeId = tmp;
-		this.routingTable.nodeId = tmp;
+		this.routingTable.myId = tmp;
 	}
 
 }
