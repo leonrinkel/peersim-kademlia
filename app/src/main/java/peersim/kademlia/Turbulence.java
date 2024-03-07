@@ -154,8 +154,7 @@ public class Turbulence implements Control {
 		m.dest = newKad.nodeId;
 
 		// perform initialization
-		//newKad.routingTable.addNeighbour(newNode, start, ((KademliaProtocol) (start.getProtocol(kademliaid))).nodeId);
-		newKad.routingTable.add(((KademliaProtocol) (start.getProtocol(kademliaid))).nodeId);
+		newKad.routingTable.add(newNode, start, ((KademliaProtocol) (start.getProtocol(kademliaid))).nodeId);
 
 		// start auto-search
 		EDSimulator.add(0, m, newNode, kademliaid);

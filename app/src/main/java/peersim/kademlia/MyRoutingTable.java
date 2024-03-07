@@ -1,6 +1,9 @@
 package peersim.kademlia;
 
 import java.util.List;
+
+import peersim.core.Node;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +41,7 @@ public class MyRoutingTable implements Cloneable {
         }
     }
 
-    public void add(BigInteger peerId) {
+    public void add(Node myNode, Node peerNode, BigInteger peerId) {
         int bucketIdx = this.bucketIdxForPeer(peerId);
         MyKBucket bucket = this.buckets.get(bucketIdx);
 
@@ -49,7 +52,7 @@ public class MyRoutingTable implements Cloneable {
 
         // check if enough space in bucket
         if (!bucket.full()) {
-            bucket.add(peerId);
+            bucket.add(myNode, peerNode, peerId);
             return;
         }
 
@@ -61,12 +64,12 @@ public class MyRoutingTable implements Cloneable {
             bucket = this.buckets.get(bucketIdx);
 
             if (!bucket.full()) {
-                bucket.add(peerId);
+                bucket.add(myNode, peerNode, peerId);
                 return;
             }
         }
 
-        bucket.replace(peerId);
+        bucket.replace(myNode, peerNode, peerId);
         this.totalReplace++;
     }
 
