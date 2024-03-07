@@ -83,6 +83,38 @@ public class KademliaObserver implements Control {
 			dist4count.getSum()
 		));
 
+		int sumOfBuckets = 0;
+		int sumOfPeers = 0;
+		int minOfBuckets = Integer.MAX_VALUE, maxOfBuckets = Integer.MIN_VALUE;
+		int minOfPeers = Integer.MAX_VALUE, maxOfPeers = Integer.MIN_VALUE;
+		for (int i = 0; i < Network.size(); i++)
+		{
+			MyRoutingTable table =
+				((KademliaProtocol) Network.get(i).getProtocol(this.pid)).routingTable;
+
+				sumOfBuckets += table.numOfBuckets();
+			sumOfPeers += table.numOfPeers();
+
+			if (table.numOfBuckets() < minOfBuckets)
+				minOfBuckets = table.numOfBuckets();
+			if (table.numOfBuckets() > maxOfBuckets)
+				maxOfBuckets = table.numOfBuckets();
+
+			if (table.numOfPeers() < minOfPeers)
+				minOfPeers = table.numOfPeers();
+			if (table.numOfPeers() > maxOfPeers)
+				maxOfPeers = table.numOfPeers();
+		}
+		double avgNumOfBuckets = ((double) sumOfBuckets) / Network.size();
+		double avgNumOfPeers = ((double) sumOfPeers) / Network.size();
+
+		System.err.println(String.format(
+			"[time=%d]:[%d min buckets] [%f avg buckets] [%d max buckets] [%d min peers] [%f avg peers] [%d max peers]",
+			CommonState.getTime(),
+			minOfBuckets, avgNumOfBuckets, maxOfBuckets,
+			minOfPeers, avgNumOfPeers, maxOfPeers
+		));
+
 		if (CommonState.getTime() == 3600000) {
 			// create hop file
 			try {
