@@ -85,15 +85,18 @@ public class KademliaObserver implements Control {
 
 		int sumOfBuckets = 0;
 		int sumOfPeers = 0;
+		int sumOfReplace = 0;
 		int minOfBuckets = Integer.MAX_VALUE, maxOfBuckets = Integer.MIN_VALUE;
 		int minOfPeers = Integer.MAX_VALUE, maxOfPeers = Integer.MIN_VALUE;
+		int minReplace = Integer.MAX_VALUE, maxReplace = Integer.MIN_VALUE;
 		for (int i = 0; i < Network.size(); i++)
 		{
 			MyRoutingTable table =
 				((KademliaProtocol) Network.get(i).getProtocol(this.pid)).routingTable;
 
-				sumOfBuckets += table.numOfBuckets();
+			sumOfBuckets += table.numOfBuckets();
 			sumOfPeers += table.numOfPeers();
+			sumOfReplace += table.totalReplace;
 
 			if (table.numOfBuckets() < minOfBuckets)
 				minOfBuckets = table.numOfBuckets();
@@ -104,15 +107,21 @@ public class KademliaObserver implements Control {
 				minOfPeers = table.numOfPeers();
 			if (table.numOfPeers() > maxOfPeers)
 				maxOfPeers = table.numOfPeers();
+			if (table.totalReplace < minReplace)
+				minReplace = table.totalReplace;
+			if (table.totalReplace > maxReplace)
+				maxReplace = table.totalReplace;
 		}
 		double avgNumOfBuckets = ((double) sumOfBuckets) / Network.size();
 		double avgNumOfPeers = ((double) sumOfPeers) / Network.size();
+		double avgReplace = ((double) sumOfReplace) / Network.size();
 
 		System.err.println(String.format(
-			"[time=%d]:[%d min buckets] [%f avg buckets] [%d max buckets] [%d min peers] [%f avg peers] [%d max peers]",
+			"[time=%d]:[%d min buckets] [%f avg buckets] [%d max buckets] [%d min peers] [%f avg peers] [%d max peers] [%d min replace] [%f avg replace] [%d max replace]",
 			CommonState.getTime(),
 			minOfBuckets, avgNumOfBuckets, maxOfBuckets,
-			minOfPeers, avgNumOfPeers, maxOfPeers
+			minOfPeers, avgNumOfPeers, maxOfPeers,
+			minReplace, avgReplace, maxReplace
 		));
 
 		if (CommonState.getTime() == 3600000) {

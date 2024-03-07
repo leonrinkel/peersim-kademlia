@@ -12,6 +12,8 @@ public class MyRoutingTable implements Cloneable {
 
     public BigInteger myId = null;
 
+    public int totalReplace = 0;
+
     public MyRoutingTable() {
         this.buckets = new ArrayList<>();
         this.buckets.add(new MyKBucket());
@@ -65,6 +67,7 @@ public class MyRoutingTable implements Cloneable {
         }
 
         bucket.replace(peerId);
+        this.totalReplace++;
     }
 
     public void remove(BigInteger peerId) {
