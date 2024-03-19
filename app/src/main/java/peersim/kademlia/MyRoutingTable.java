@@ -33,7 +33,7 @@ public class MyRoutingTable implements Cloneable {
 
     private void unfold() {
         MyKBucket bucket = this.buckets.get(this.buckets.size() - 1);
-        MyKBucket newBucket = bucket.split(this.buckets.size(), this.myId);
+        MyKBucket newBucket = bucket.split(this.buckets.size() - 1, this.myId);
         this.buckets.add(newBucket);
 
         if (newBucket.full()) {
@@ -44,6 +44,10 @@ public class MyRoutingTable implements Cloneable {
     public void add(Node myNode, Node peerNode, BigInteger peerId) {
         int bucketIdx = this.bucketIdxForPeer(peerId);
         MyKBucket bucket = this.buckets.get(bucketIdx);
+
+        if (peerId == myId) {
+            return;
+        }
 
         // peer already exists in routing table
         if (bucket.contains(peerId)) {
