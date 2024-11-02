@@ -41,7 +41,7 @@ public class MyRoutingTable implements Cloneable {
         }
     }
 
-    public void add(Node myNode, Node peerNode, BigInteger peerId) {
+    public void add(Node myNode, Node peerNode, BigInteger peerId, boolean replaceable) {
         int bucketIdx = this.bucketIdxForPeer(peerId);
         MyKBucket bucket = this.buckets.get(bucketIdx);
 
@@ -56,7 +56,7 @@ public class MyRoutingTable implements Cloneable {
 
         // check if enough space in bucket
         if (!bucket.full()) {
-            bucket.add(myNode, peerNode, peerId);
+            bucket.add(myNode, peerNode, peerId, replaceable);
             return;
         }
 
@@ -68,12 +68,12 @@ public class MyRoutingTable implements Cloneable {
             bucket = this.buckets.get(bucketIdx);
 
             if (!bucket.full()) {
-                bucket.add(myNode, peerNode, peerId);
+                bucket.add(myNode, peerNode, peerId, replaceable);
                 return;
             }
         }
 
-        bucket.replace(myNode, peerNode, peerId);
+        bucket.replace(myNode, peerNode, peerId, replaceable);
         this.totalReplace++;
     }
 
