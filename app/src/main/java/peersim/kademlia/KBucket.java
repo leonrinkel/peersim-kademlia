@@ -22,6 +22,8 @@ public class KBucket implements Cloneable {
 	protected TreeMap<BigInteger, Long> neighbours = null;
 	/** Maps node id to number of hops */
 	protected TreeMap<BigInteger, Integer> hops = null;
+	/** Maps node id to latency */
+	protected TreeMap<BigInteger, Long> latencies = null;
 
 	private final int topology;
 

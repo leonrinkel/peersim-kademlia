@@ -12,12 +12,14 @@ public class MyKBucket {
 
     private List<BigInteger> _peerIds;
     private List<Integer> _peerHops;
+    private List<Integer> _peerLatencies;
 
     private final int _topologyPid;
 
     public MyKBucket() {
         this._peerIds = new ArrayList<>();
         this._peerHops = new ArrayList<>();
+        this._peerLatencies = new ArrayList<>();
 
         this._topologyPid = Configuration.getPid("protocol.1grapht.topo");
     }
@@ -36,24 +38,32 @@ public class MyKBucket {
 
     public void add(Node myNode, Node peerNode, BigInteger peerId) {
         // determine number of hops to peer
-        int hops = ((GraphTopology) myNode.getProtocol(this._topologyPid)).getHops(myNode, peerNode);
+        int hops = ((GraphTopology) myNode
+            .getProtocol(this._topologyPid))
+            .getHops(myNode, peerNode);
+        // determine latency to peer
+        int latency = ((GraphTopology) myNode
+            .getProtocol(this._topologyPid))
+            .getLatency(myNode, peerNode);
 
         // add peer
         this._peerIds.addFirst(peerId);
         this._peerHops.addFirst(hops);
+        this._peerLatencies.addFirst(latency);
     }
 
     public void remove(BigInteger peerId) {
         int index = this._peerIds.indexOf(peerId);
         this._peerIds.remove(index);
         this._peerHops.remove(index);
+        this._peerLatencies.remove(index);
     }
 
     public void replace(Node myNode, Node peerNode, BigInteger peerId) {
         // determine which node to evict, either just last, or...
         int indexToEvict = this._peerIds.size() - 1;
         if (KademliaCommonConfig.SORT == 1) {
-            // ...with sorting, search for node with max hops
+            // ...with path length sorting, search for node with max hops
             int maxHops = Integer.MIN_VALUE;
             for (int i = 0; i < this._peerIds.size(); i++) {
                 if (this._peerHops.get(i) > maxHops) {
@@ -61,10 +71,20 @@ public class MyKBucket {
                     maxHops = this._peerHops.get(i);
                 }
             }
+        } else if (KademliaCommonConfig.SORT == 2) {
+            // ...with latency sorting, search for node with max latency
+            int maxLatency = Integer.MIN_VALUE;
+            for (int i = 0; i < this._peerIds.size(); i++) {
+                if (this._peerLatencies.get(i) > maxLatency) {
+                    indexToEvict = i;
+                    maxLatency = this._peerLatencies.get(i);
+                }
+            }
         }
 
         this._peerIds.remove(indexToEvict);
         this._peerHops.remove(indexToEvict);
+        this._peerLatencies.remove(indexToEvict);
 
         this.add(myNode, peerNode, peerId);
     }
@@ -82,8 +102,10 @@ public class MyKBucket {
         for (BigInteger peerId : peersToMove) {
             int index = this._peerIds.indexOf(peerId);
             int peerHops = this._peerHops.get(index);
+            int peerLatency = this._peerLatencies.get(index);
             newBucket._peerIds.add(peerId);
             newBucket._peerHops.add(peerHops);
+            newBucket._peerLatencies.add(peerLatency);
 
             this.remove(peerId);
         }

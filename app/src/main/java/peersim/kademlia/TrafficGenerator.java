@@ -75,23 +75,23 @@ public class TrafficGenerator implements Control {
 	 * @return boolean
 	 */
 	public boolean execute() {
-		// find source node
 		Node src;
-		do {
-			src = Network.get(CommonState.r.nextInt(Network.size()));
-		} while ((src == null) || (!src.isUp()));
+		Node dst;
 
-		// find destination node
 		int desiredDistance = pickDistance(CommonState.r);
 		int actualDistance;
-		Node dst;
+
 		do {
+			// find source node
+			src = Network.get(CommonState.r.nextInt(Network.size()));
+			// find destination node
 			dst = Network.get(CommonState.r.nextInt(Network.size()));
+
 			actualDistance =
 				((GraphTopology) src.getProtocol(topoPid)).getHops(src, dst);
 		} while (
-			(dst == null) ||
-			(!dst.isUp()) ||
+			(src == null) || (!src.isUp()) ||
+			(dst == null) || (!dst.isUp()) ||
 			(actualDistance != desiredDistance)
 		);
 

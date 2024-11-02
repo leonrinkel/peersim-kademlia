@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml
+    xmlns="http://graphml.graphdrawing.org/xmlns"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <key id="key0" for="edge" attr.name="latency" attr.type="int"/>
+    <graph edgedefault="undirected">
+        <node id="0"/> <!-- AS101 -->
+        <node id="1"/> <!-- AS102 -->
+        <node id="2"/> <!-- AS103 -->
+        <node id="3"/> <!-- AS104 -->
+        <node id="4"/> <!-- AS105 -->
+        <node id="5"/> <!-- AS1002 -->
+        <node id="6"/> <!-- AS1003 -->
+        <node id="7"/> <!-- AS1004 -->
+        <node id="8"/> <!-- AS1001 -->
+        <node id="9"/> <!-- AS1006 -->
+        <node id="10"/> <!-- AS1007 -->
+        <node id="11"/> <!-- AS1008 -->
+        <node id="12"/> <!-- AS1009 -->
+        <node id="13"/> <!-- AS1010 -->
+        <node id="14"/> <!-- AS1005 -->
+
+        <!-- AS105 <-> AS104 -->
+        <edge id="0" source="4" target="3">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS1006 <-> AS1009 -->
+        <edge id="1" source="9" target="12">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1010 <-> AS1006 -->
+        <edge id="2" source="13" target="9">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1002 <-> AS1005 -->
+        <edge id="3" source="5" target="14">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1010 <-> AS1009 -->
+        <edge id="4" source="13" target="12">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1003 <-> AS103 -->
+        <edge id="5" source="6" target="2">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS102 <-> AS101 -->
+        <edge id="6" source="1" target="0">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS102 <-> AS104 -->
+        <edge id="7" source="1" target="3">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS105 <-> AS103 -->
+        <edge id="8" source="4" target="2">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS1008 <-> AS102 -->
+        <edge id="9" source="11" target="1">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS104 <-> AS101 -->
+        <edge id="10" source="3" target="0">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS104 <-> AS1010 -->
+        <edge id="11" source="3" target="13">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1003 <-> AS1005 -->
+        <edge id="12" source="6" target="14">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS102 <-> AS103 -->
+        <edge id="13" source="1" target="2">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS105 <-> AS1002 -->
+        <edge id="14" source="4" target="5">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1008 <-> AS101 -->
+        <edge id="15" source="11" target="0">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1008 <-> AS1007 -->
+        <edge id="16" source="11" target="10">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1008 <-> AS1001 -->
+        <edge id="17" source="11" target="8">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1010 <-> AS1004 -->
+        <edge id="18" source="13" target="7">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS104 <-> AS103 -->
+        <edge id="19" source="3" target="2">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS1003 <-> AS104 -->
+        <edge id="20" source="6" target="3">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1003 <-> AS1004 -->
+        <edge id="21" source="6" target="7">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS103 <-> AS101 -->
+        <edge id="22" source="2" target="0">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS105 <-> AS101 -->
+        <edge id="23" source="4" target="0">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS103 <-> AS1004 -->
+        <edge id="24" source="2" target="7">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS103 <-> AS1010 -->
+        <edge id="25" source="2" target="13">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1004 <-> AS1006 -->
+        <edge id="26" source="7" target="9">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1007 <-> AS105 -->
+        <edge id="27" source="10" target="4">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1007 <-> AS102 -->
+        <edge id="28" source="10" target="1">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS1004 <-> AS1009 -->
+        <edge id="29" source="7" target="12">
+            <data key="key0">30</data>
+        </edge>
+        <!-- AS102 <-> AS105 -->
+        <edge id="30" source="1" target="4">
+            <data key="key0">20</data>
+        </edge>
+        <!-- AS1001 <-> AS1007 -->
+        <edge id="31" source="8" target="10">
+            <data key="key0">30</data>
+        </edge>
+    </graph>
+</graphml>
