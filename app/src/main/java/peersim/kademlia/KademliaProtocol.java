@@ -171,7 +171,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	private void route(Message m, int myPid) {
 		// add message source to my routing table
 		if (m.src != null) {
-			routingTable.add(nodeIdtoNode(this.nodeId), nodeIdtoNode(m.src), m.src, false);
+			routingTable.add(nodeIdtoNode(this.nodeId), nodeIdtoNode(m.src), m.src);
 		}
 
 		// get corresponding find operation (using the message field operationId)
@@ -302,7 +302,7 @@ public class KademliaProtocol implements Cloneable, EDProtocol {
 	 */
 	public void sendMessage(Message m, BigInteger destId, int myPid) {
 		// add destination to routing table
-		this.routingTable.add(nodeIdtoNode(this.nodeId), nodeIdtoNode(destId), destId, false);
+		this.routingTable.add(nodeIdtoNode(this.nodeId), nodeIdtoNode(destId), destId);
 
 		Node src = nodeIdtoNode(this.nodeId);
 		Node dest = nodeIdtoNode(destId);
